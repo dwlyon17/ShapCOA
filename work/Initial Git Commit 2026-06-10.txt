@@ -1,0 +1,302 @@
+
+D:\Documents\ADMIN\source\ShapleyOA>cd shapCOA
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git add .
+warning: in the working copy of 'ShapCOA/NAMESPACE', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/KDRsolve1Combo.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/KDRsolveComboR.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/KDRsolveCombos.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/KDRsolveCombos_cpp.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/KDRsolveOrders_cpp.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/SVsByCombos.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/SVsByOrders.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/SVsByOrders1.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/SVsForKDRsByOrders.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/SVsForMaxDiff.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/SVsMaxDiffCalc_cpp.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/adjustOrNot.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/assessCOA.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/assessOA.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/checkWeights.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/ckCOA.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/ckOA.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/cpBuild.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/cpConstantOut.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/designCode.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/dropCOA.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/genAllOrders.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/genCyclic.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/genRandOrders.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/genWilliams.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/getCOA.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/getOA.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/increments.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/makeCOA.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/permuteCOA.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/primeSize.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/swp.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/totalup.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/turf1.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/man/userCode.Rd', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/src/.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/src/Makevars', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/src/Makevars.win', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ShapCOA/vignettes/.gitignore', LF will be replaced by CRLF the next time Git touches it
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git commit -m "Initial package commit"
+[master (root-commit) 57a1296] Initial package commit
+ 70 files changed, 5171 insertions(+)
+ create mode 100644 ShapCOA/.Rbuildignore
+ create mode 100644 ShapCOA/.gitignore
+ create mode 100644 ShapCOA/DESCRIPTION
+ create mode 100644 ShapCOA/NAMESPACE
+ create mode 100644 ShapCOA/R/COAs7.R
+ create mode 100644 ShapCOA/R/Drivers1.R
+ create mode 100644 ShapCOA/R/KDRs1.R
+ create mode 100644 ShapCOA/R/Orders1.R
+ create mode 100644 ShapCOA/R/RcppExports.R
+ create mode 100644 ShapCOA/R/SVsForMaxDiff.R
+ create mode 100644 ShapCOA/R/ShapCOA-package.R
+ create mode 100644 ShapCOA/R/Turf1.R
+ create mode 100644 ShapCOA/R/dummy.R
+ create mode 100644 ShapCOA/R/sysdata.rda
+ create mode 100644 ShapCOA/Read-and-delete-me
+ create mode 100644 ShapCOA/data-raw/DATASET.R
+ create mode 100644 ShapCOA/data-raw/createPermorder1.R
+ create mode 100644 ShapCOA/inst/GSSdata.rds
+ create mode 100644 ShapCOA/inst/MDtester.RDS
+ create mode 100644 ShapCOA/inst/TURFtest.RDS
+ create mode 100644 ShapCOA/man/KDRsolve1Combo.Rd
+ create mode 100644 ShapCOA/man/KDRsolveComboR.Rd
+ create mode 100644 ShapCOA/man/KDRsolveCombos.Rd
+ create mode 100644 ShapCOA/man/KDRsolveCombos_cpp.Rd
+ create mode 100644 ShapCOA/man/KDRsolveOrders_cpp.Rd
+ create mode 100644 ShapCOA/man/SVsByCombos.Rd
+ create mode 100644 ShapCOA/man/SVsByOrders.Rd
+ create mode 100644 ShapCOA/man/SVsByOrders1.Rd
+ create mode 100644 ShapCOA/man/SVsForKDRsByOrders.Rd
+ create mode 100644 ShapCOA/man/SVsForMaxDiff.Rd
+ create mode 100644 ShapCOA/man/SVsMaxDiffCalc_cpp.Rd
+ create mode 100644 ShapCOA/man/adjustOrNot.Rd
+ create mode 100644 ShapCOA/man/assessCOA.Rd
+ create mode 100644 ShapCOA/man/assessOA.Rd
+ create mode 100644 ShapCOA/man/checkWeights.Rd
+ create mode 100644 ShapCOA/man/ckCOA.Rd
+ create mode 100644 ShapCOA/man/ckOA.Rd
+ create mode 100644 ShapCOA/man/cpBuild.Rd
+ create mode 100644 ShapCOA/man/cpConstantOut.Rd
+ create mode 100644 ShapCOA/man/designCode.Rd
+ create mode 100644 ShapCOA/man/dropCOA.Rd
+ create mode 100644 ShapCOA/man/genAllOrders.Rd
+ create mode 100644 ShapCOA/man/genCyclic.Rd
+ create mode 100644 ShapCOA/man/genRandOrders.Rd
+ create mode 100644 ShapCOA/man/genWilliams.Rd
+ create mode 100644 ShapCOA/man/getCOA.Rd
+ create mode 100644 ShapCOA/man/getOA.Rd
+ create mode 100644 ShapCOA/man/increments.Rd
+ create mode 100644 ShapCOA/man/makeCOA.Rd
+ create mode 100644 ShapCOA/man/permuteCOA.Rd
+ create mode 100644 ShapCOA/man/primeSize.Rd
+ create mode 100644 ShapCOA/man/swp.Rd
+ create mode 100644 ShapCOA/man/totalup.Rd
+ create mode 100644 ShapCOA/man/turf1.Rd
+ create mode 100644 ShapCOA/man/userCode.Rd
+ create mode 100644 ShapCOA/src/.gitignore
+ create mode 100644 ShapCOA/src/KDRsolveCombos.cpp
+ create mode 100644 ShapCOA/src/KDRsolveOrders2.cpp
+ create mode 100644 ShapCOA/src/Makevars
+ create mode 100644 ShapCOA/src/Makevars.win
+ create mode 100644 ShapCOA/src/RcppExports.cpp
+ create mode 100644 ShapCOA/src/SVsMaxDiffCalc2.cpp
+ create mode 100644 ShapCOA/tests/testthat.R
+ create mode 100644 ShapCOA/tests/testthat/test-COAs7.R
+ create mode 100644 ShapCOA/tests/testthat/test-Drivers1.R
+ create mode 100644 ShapCOA/tests/testthat/test-KDRs1.R
+ create mode 100644 ShapCOA/tests/testthat/test-Orders1.R
+ create mode 100644 ShapCOA/tests/testthat/test-SVsForMaxDiff.R
+ create mode 100644 ShapCOA/vignettes/.gitignore
+ create mode 100644 ShapCOA/vignettes/Overview.Rmd
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git branch -M main
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote add origin https://github.com/dwlyon17
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git pull origin main --allow-unrelated-histories
+remote: Not Found
+fatal: repository 'https://github.com/dwlyon17/' not found
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote add origin https://github.com/dwlyon17/ShapCOA
+error: remote origin already exists.
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git pull origin main --allow-unrelated-histories
+remote: Not Found
+fatal: repository 'https://github.com/dwlyon17/' not found
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote add origin https://github.com/dwlyon17
+error: remote origin already exists.
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote add origin https://github.com/dwlyon17/ShapCOA
+error: remote origin already exists.
+warning: in the working copy of 'ShapCOA/vignettes/.gitignore', LF will be replaced by CRLF the next time Git touches it
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git commit -m "Initial package commit"
+[master (root-commit) 57a1296] Initial package commit
+ 70 files changed, 5171 insertions(+)
+ create mode 100644 ShapCOA/.Rbuildignore
+ create mode 100644 ShapCOA/.gitignore
+ create mode 100644 ShapCOA/DESCRIPTION
+ create mode 100644 ShapCOA/NAMESPACE
+ create mode 100644 ShapCOA/R/COAs7.R
+ create mode 100644 ShapCOA/R/Drivers1.R
+ create mode 100644 ShapCOA/R/KDRs1.R
+ create mode 100644 ShapCOA/R/Orders1.R
+ create mode 100644 ShapCOA/R/RcppExports.R
+ create mode 100644 ShapCOA/R/SVsForMaxDiff.R
+ create mode 100644 ShapCOA/R/ShapCOA-package.R
+ create mode 100644 ShapCOA/R/Turf1.R
+ create mode 100644 ShapCOA/R/dummy.R
+ create mode 100644 ShapCOA/R/sysdata.rda
+ create mode 100644 ShapCOA/Read-and-delete-me
+ create mode 100644 ShapCOA/data-raw/DATASET.R
+ create mode 100644 ShapCOA/data-raw/createPermorder1.R
+ create mode 100644 ShapCOA/inst/GSSdata.rds
+ create mode 100644 ShapCOA/inst/MDtester.RDS
+ create mode 100644 ShapCOA/inst/TURFtest.RDS
+ create mode 100644 ShapCOA/man/KDRsolve1Combo.Rd
+ create mode 100644 ShapCOA/man/KDRsolveComboR.Rd
+ create mode 100644 ShapCOA/man/KDRsolveCombos.Rd
+ create mode 100644 ShapCOA/man/KDRsolveCombos_cpp.Rd
+ create mode 100644 ShapCOA/man/KDRsolveOrders_cpp.Rd
+ create mode 100644 ShapCOA/man/SVsByCombos.Rd
+ create mode 100644 ShapCOA/man/SVsByOrders.Rd
+ create mode 100644 ShapCOA/man/SVsByOrders1.Rd
+ create mode 100644 ShapCOA/man/SVsForKDRsByOrders.Rd
+ create mode 100644 ShapCOA/man/SVsForMaxDiff.Rd
+ create mode 100644 ShapCOA/man/SVsMaxDiffCalc_cpp.Rd
+ create mode 100644 ShapCOA/man/adjustOrNot.Rd
+ create mode 100644 ShapCOA/man/assessCOA.Rd
+ create mode 100644 ShapCOA/man/assessOA.Rd
+ create mode 100644 ShapCOA/man/checkWeights.Rd
+ create mode 100644 ShapCOA/man/ckCOA.Rd
+ create mode 100644 ShapCOA/man/ckOA.Rd
+ create mode 100644 ShapCOA/man/cpBuild.Rd
+ create mode 100644 ShapCOA/man/cpConstantOut.Rd
+ create mode 100644 ShapCOA/man/designCode.Rd
+ create mode 100644 ShapCOA/man/dropCOA.Rd
+ create mode 100644 ShapCOA/man/genAllOrders.Rd
+ create mode 100644 ShapCOA/man/genCyclic.Rd
+ create mode 100644 ShapCOA/man/genRandOrders.Rd
+ create mode 100644 ShapCOA/man/genWilliams.Rd
+ create mode 100644 ShapCOA/man/getCOA.Rd
+ create mode 100644 ShapCOA/man/getOA.Rd
+ create mode 100644 ShapCOA/man/increments.Rd
+ create mode 100644 ShapCOA/man/makeCOA.Rd
+ create mode 100644 ShapCOA/man/permuteCOA.Rd
+ create mode 100644 ShapCOA/man/primeSize.Rd
+ create mode 100644 ShapCOA/man/swp.Rd
+ create mode 100644 ShapCOA/man/totalup.Rd
+ create mode 100644 ShapCOA/man/turf1.Rd
+ create mode 100644 ShapCOA/man/userCode.Rd
+ create mode 100644 ShapCOA/src/.gitignore
+ create mode 100644 ShapCOA/src/KDRsolveCombos.cpp
+ create mode 100644 ShapCOA/src/KDRsolveOrders2.cpp
+ create mode 100644 ShapCOA/src/Makevars
+ create mode 100644 ShapCOA/src/Makevars.win
+ create mode 100644 ShapCOA/src/RcppExports.cpp
+ create mode 100644 ShapCOA/src/SVsMaxDiffCalc2.cpp
+ create mode 100644 ShapCOA/tests/testthat.R
+ create mode 100644 ShapCOA/tests/testthat/test-COAs7.R
+ create mode 100644 ShapCOA/tests/testthat/test-Drivers1.R
+ create mode 100644 ShapCOA/tests/testthat/test-KDRs1.R
+ create mode 100644 ShapCOA/tests/testthat/test-Orders1.R
+ create mode 100644 ShapCOA/tests/testthat/test-SVsForMaxDiff.R
+ create mode 100644 ShapCOA/vignettes/.gitignore
+ create mode 100644 ShapCOA/vignettes/Overview.Rmd
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git branch -M main
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote add origin https://github.com/dwlyon17
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git pull origin main --allow-unrelated-histories
+remote: Not Found
+fatal: repository 'https://github.com/dwlyon17/' not found
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote add origin https://github.com/dwlyon17/ShapCOA
+error: remote origin already exists.
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git pull origin main --allow-unrelated-histories
+remote: Not Found
+fatal: repository 'https://github.com/dwlyon17/' not found
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote add origin https://github.com/dwlyon17
+error: remote origin already exists.
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote add origin https://github.com/dwlyon17/ShapCOA
+error: remote origin already exists.
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git push -u origin main
+remote: Not Found
+fatal: repository 'https://github.com/dwlyon17/' not found
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote -v
+origin  https://github.com/dwlyon17 (fetch)
+origin  https://github.com/dwlyon17 (push)
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote set-url origin https://github.com/DWLyon17/ShapCOA.git
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git remote -v
+origin  https://github.com/DWLyon17/ShapCOA.git (fetch)
+origin  https://github.com/DWLyon17/ShapCOA.git (push)
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git pull origin main --allow-unrelated-histories
+remote: Enumerating objects: 6, done.
+remote: Counting objects: 100% (6/6), done.
+remote: Compressing objects: 100% (4/4), done.
+remote: Total 6 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+Unpacking objects: 100% (6/6), 2.06 KiB | 3.00 KiB/s, done.
+From https://github.com/DWLyon17/ShapCOA
+ * branch            main       -> FETCH_HEAD
+ * [new branch]      main       -> origin/main
+Merge made by the 'ort' strategy.
+ README.md | 7 +++++++
+ 1 file changed, 7 insertions(+)
+ create mode 100644 README.md
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>git push -u origin main
+info: please complete authentication in your browser...
+Enumerating objects: 83, done.
+Counting objects: 100% (83/83), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (77/77), done.
+Writing objects: 100% (82/82), 454.65 KiB | 7.98 MiB/s, done.
+Total 82 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), done.
+remote: This repository moved. Please use the new location:
+remote:   https://github.com/dwlyon17/ShapCOA.git
+To https://github.com/DWLyon17/ShapCOA.git
+   ac7c074..0e9e075  main -> main
+branch 'main' set up to track 'origin/main'.
+
+D:\Documents\ADMIN\source\ShapleyOA\ShapCOA>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

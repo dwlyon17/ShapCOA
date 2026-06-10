@@ -1,0 +1,196 @@
+
+---
+title: "Overview of Package ShapCOA"
+output: 
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to ShapCOA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{css, echo=FALSE}
+code {
+  font-size: 90%;
+}
+p code, li code {
+  font-size: 105%;
+}
+table code {
+    font-size: inherit !important; /* Force code to match the cell font size */
+    font-weight: bold;             /* Optional: makes the code stand out more */
+}
+```
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ShapCOA)
+```
+
+## Overview of Package “ShapCOA”
+
+Package `ShapCOA` includes functions to compute approximate Shapley Values 
+using Component Order of Addition (COA) designs, as well as many idea-adjacent
+other Shapley Value and TURF analysis routines.
+
+For general introductions to Shapley Values, COAs, and other ideas in this package, see:
+
+* **For SVs in general, emphasis on COAs, and for MaxDiff-based analyses:** PowerPoint slides at [https://github.com/DWLyon17/COAslides2026](https://github.com/DWLyon17/COAslides2026) (PDF paper to be added later) 
+
+* **For SVs in general and for hypergeometric computation:** PowerPoint slides and PDF paper at [https://github.com/DWLyon/ShapleySlides2018](https://github.com/DWLyon/ShapleySlides2018)
+
+* **For a general introduction to SVs:** [Proceedings of the 2013 Sawtooth Software Conference](https://sawtoothsoftware.com), pp. 267-274 (PDF pp. 285-292)]
+
+* **For a general introduction to MaxDiff analyses:** https://sawtoothsoftware.com/maxdiff
+
+The `ShapCOA` package is intended to:
+
+* **Generate “Component Order of Addition” designs (“COAs”):** These are small samples of orderings of a number of discrete items.
+
+* **Calculate approximate Shapley Values (SVs) using COAs:** COAs have been shown to be an accurate and efficient way to approximate SVs, even with huge numbers of items.
+
+* **Calculate exact Shapley Values** for smaller numbers of items.
+
+* **Provide tailored SV calculations** for several common marketing research applications: linear key driver regressions, standard TURF analysis and variants of it, and “TURF on MaxDiff” analyses.
+
+* **Provide SV calculation drivers** for *any* underlying analysis on a “bring your own” valuation function basis.
+
+* (Eventually) **Provide SV calculations for TURF problems and variants using hypergeometric calculations**, an exact and extremely fast approach.
+
+* (Eventually) **Provide functions to conduct underlying TURF analyses** (not just SVs based on TURF), searching for “best” combinations of items.
+
+> **Note:** In game theory “the Shapley Value” (singular) is a set of numbers, one for each item in the analysis. In this package, we use the common marketing research synecdoche to refer to each item as having its own SV, and the collection of them being Shapley Values (plural).
+
+---
+
+## Computation Approaches
+
+There are three general ways to calculate Shapley Values:
+
+<div style="padding-left: 30px;">
+**Combinations Approach.**  The SV of an item is the average increase in the value of a combination of items when that item is added to a combination. The averaging is over all possible combinations but weighted so that each size of combination counts equally. This yields exact SVs but becomes computationally infeasible beyond 25 or 30 items, as the number of combinations to be considered is $2^n$. This package includes combinations-based calculation functions.
+
+**Orderings Approach.**  The SV of an item is the average increase in value when it enters a combination, averaged over all possible orders of entry of all items. The number of orderings explodes even more quickly than combinations, that number being $n!$, so averaging over all orderings is usually not feasible beyond 12 items or so.  However, this approach can also use COAs as a sample of orderings, typically involving about $n(n-1)$ orderings and achieving highly accurate approximations. That is the central contribution of this package.
+
+**Hypergeometric Approach.**  For standard TURF analyses (meaning item data at the respondent level is either 0 or 1, and the value of a combination is something simple like the percentage of respondents for whom a combination includes at least one item with a value of 1), and a number of variants also based on 0/1 data, SVs collapse to extremely simple respondent-level calculations and means over respondents. This package will include (but does not yet) functions to implement those calculations.
+</div>
+
+---
+
+## Valuation Functions
+
+Shapley Values summarize how the value of a combination of items changes with new items. The value of a combination of items depends on the underlying analysis the SVs summarize.  In key driver regressions, the value of a combination of variables is typically the $R^2$ they produce when regressing a dependent variable on them.  In TURF analyses, the value is typically the “reach” of a combination of items. 
+
+Many other ways of valuing combinations are possible, depending on the data and the analysis of interest.
+ShapCOA supports several general types of valuation functions (aka simply  “value functions”):
+
+<div style="padding-left: 30px;">
+**Linear key driver regressions.**  The package includes functions to use not only r-squareds but also adjusted r-squareds and to compute them simultaneously for more than one dependent variable.
+
+**Log-linear key driver regressions.**  The package will (but does not yet) include functions to use increases in log-likelihood as the value function.
+
+**TURF analyses.**  `ShapCOA` includes a function to perform standard TURF “reach” analyses, with arbitrary “depths” of reach (number of items reaching required for an overall reach).
+
+**Variants of TURF.**  The package will (but does not yet) include functions to analyze a number of variants of TURF.  (See the paper and slides at https://github.com/dwlyon17/ShapleySlides2018/tree/main)
+
+**TURF on MaxDiff.**  The package includes a function to perform several variants of TURF on MaxDiff data, including both anchored and unanchored MaxDiffs, pre-thresholding of item scores, weighted probability scores and post-thresholding of weighted probability scores.
+
+**Bring your own.**  The package includes drivers to calculate SVs from any user-supplied valuation function.  For example, one might think of valuing variables in a typing tool by the RLH increment they provide when added, using any classifier (discriminant analysis, random forests, other tree methods support vector machines, etc., etc.).  
+</div>
+
+
+## Integrated Solutions
+
+The general structure of the package includes “drivers” and “valuation functions” that can be mixed or matched in various ways.  It also includes tightly-coupled or integrated functions that address some of the most common problems, and take advantage of potential application-specifc efficiencies in valuation functions.  In some cases, application-aware drivers can spare valuation functions from doing some work.
+
+There are integrated solution functions for:
+
+<div style="padding-left: 30px;">
+**Linear key driver regressions.**  An orderings-based (i.e., able to use COAs) function provides SVs for both straight and adjusted r-squareds and for multiple dependent variables, all in a single call.
+
+
+**TURF on MaxDiff analyses.**   An orderings-based (i.e., able to use COAs) function provides for standard TURF analyses, as well as for several versions of TURF on MaxDiff data (including all the versions used in Sawtooth Software products).
+</div>
+
+## Using COAs
+
+The `getCOA()` function will generate a Component Order of Addition (COA) design that can be provided to various orderings-based drivers for use in SV calculations.  (Some integrated solution functions will also call it without the user explicitly having to.)
+
+A COA design, the result of `getCOA()`, is an integer matrix, with one row per item in the analysis and one column per ordering.  Note that this many-columns/few-rows structure is the transpose of what many would expect; it conforms to what base R function `combn` produces (but not to what the functionbs in package `gtools` produce).
+
+`getCOA()` will generate COAs of any size, including multiple different ones of a given size or a “stacked” design combining different ones of a given size.  *It is the only COA-related function users should normally need.*  Results are reproducible across runs.  If `getcoa()` is called repeatedly for different designs, use `random=TRUE` to avoid all results being identical.
+
+Other functions related to managing COAs ought not be needed by most users.  They include `getOA, assessOA, assessCOA, dropCOA, permuteCOA, primeSize, userCode` and `designCode`.  The latter two translate between the transposed and zero-based structure used within these functions and the 1-based result produced by `getCOA`.  `primeSize` may occasionally be useful to see in advance how large a COA will be.
+
+Several other functions generate sets or subsets of orderings that are not COAs.  They are mostly for testing and play, and include `genRandOrders, genCyclic, genWilliams` and `genAllOrders`.  Orderings-based drivers using orderings from `genAllOrders()` produce exact SVs, but the maximum feasible number of items is only about 12.  
+
+Generating COAs is very fast using the `nocheck=TRUE` parameter to `getCOA()`.  If `nocheck=FALSE`, checking a COA can be time-consuming and is unnecessary.  If all you need is a COA, and R is inconvenient to use, see the catalog of COA designs at   for pre-generated ones up to 227 items.  In that catalog, the designs are transposed from those generated here, so they are in a many-rows/few-columns layout.
+
+
+## Guide to Calculation Functions
+
+The following chart summarizes the functions that implement various applications using various computation approaches.
+
+| | Orderings-Based (COA-using) | Combinations-Based | Hypergeometric-Based |
+|:---|:---|:---|:---|
+| *Properties of Computation Approach:* | | | |
+| Numbers of items that can be handled | Up to 800 or more before memory constraints. Up to 200 or so in many cases before time constraints | Usually up to at most 30 before both memory and time constraints | Practically unlimited |
+| Accuracy of Results | Excellent with COAs. Exact if all possible orderings are used (not feasible with more than about 12 items.) | Exact | Exact |
+| **Application Type:** | | | |
+| **Linear key drivers** (see note below) | `SVsForKDRsbyOrders()` and `cpBuild()` | `SVsByCombos()` with `KDRsolveCombos()` and `cpBuild()` | Not possible |
+| **Log-linear key drivers** | Forthcoming; not yet available. Will be via `SVsByOrders()` with a new valuation function | Not included; not planned | Not possible |
+| **“Standard” TURF** | `SVsForMaxDiff()` <br> Use `xform=NULL` | `SVsByCombos()` with `turf1()` (but exceptionally inefficient). Better valuation functions forthcoming. | Forthcoming; not yet available |
+| **Variants of TURF** | Forthcoming; not yet available. Will be via `SVsByOrders()` with a new valuation function | Forthcoming; not yet available. Will be via `SVsByCombos()` with a new valuation function | Forthcoming; not yet available |
+| **TURF on MaxDiff** | `SVsForMaxDiff()` | Not included; not planned | Usually not possible; not planned |
+| **“Bring your own”** (see notes below)| `SVsByOrders()` <br> `SVsByOrders1()` | `SVsByCombos()` | Usually not possible; not planned except for further TURF variants |
+
+
+**Key Driver Regressions**
+
+For linear key drivers regressions, the package functions expect to receive a sum-of-cross-products (SCP) matrix as a parameter.  These SCP matrices must **not** include a row/column for the constant in the regression.  See `cpBuild()` and (of less use/interest) `cpConstantOut()` and `swp()`.
+
+Note that the `calc.relimp()` function in package `'relaimpo'` will also calculate exact SVs for linear regressions, using its `type=lmg` parameter.  It is less efficient than using `SVsByCombos()` with value function `KDRsolveCombos` (by around 12X) but `'relaimpo'` includes a number of additional capabilities `ShapCOA` does not (including grouped variables, always-in variables, bootstrapping functions, interaction term and average regression coefficients).
+
+
+**Bring Your Own Valuation Functions**
+
+To write your own valuation function, see the source for `KDRsolveCombo()` and `turf1()`, which are both simplest-possible examples.  Each is in R and evaluates one single combination per call (very inefficient due to many calls being needed).  Each can be supplied to and called by `SVsByCombos()` or by `SVsByOrders1()` (but not by `SVsByOrders()`).
+
+For use with `SVsByCombos()`, a more efficient approach is to have the valuation function accept many combinations (all of the same size) on each call and return one value for each.  See the source of `KDRsolveComboR()` for an example in R.  For large problems, implement the function in C++.  For examples, see source of `KDRsolveCombos1_cpp()` and `KDRsolveCombos_cpp()`.
+
+The most generally useful structure for valuation functions is orderings-based ones for use with `SVsByOrders()`.  Such functions can accept a single ordering of items and return a vector of the same length giving the value of the increasingly-large combination at each step.  (They do not need to difference the values to get increases, nor do they need to “derotate” the order of items.)  
+
+Better still, an orderings-based valuation function can accept an entire COA or array of orderings at once, and return an array of values of the same size and shape as the orderings array.  For large problems, writing in C++ for speed will be worthwhile.  See the source of `KDRsolveOrders_cpp()` for one example.  (I do not have an R example handy, but will add one later.)
+
+All valuation functions receive the combination(s) or orderings(s) they are to evaluate as their first parameter.  Other parameters are passed via `...`.
+
+
+## Size-Limited Shapley Values
+
+From a business point of view, we may be interested only in smaller sizes of combinations.  With 42 items, we might care only about combinations of up to size 10, and not care how much an item adds when it is the 37th one into a combination.  
+
+The driver and integrated solutions functions include a `maxitems` parameter to handle this.  `maxitems=10`, for example, would average only contributions to combinations of 9 or smaller (i.e., including an item’s contribution to a combo of 9 when it becomes the 10th one entered).  Valuation functions need not concern themselves with this except that orderings-based ones must be willing to accept orderings that are shorter than the number of items (and cannot deduce number of items from the length of orderings).
+
+When a COA or other orderings are supplied to a function for size-limited SVs, the orderings can be pre-truncated by the caller to the size desired (so the value of `maxitems` is implicit).  More conveniently and explicitly, the full orderings can be supplied and most driver or integrated functions will truncate as specified by the `maxitems` parameter (`SVsByOrder1()` will not, however).
+
+Of less obvious use, we might not care about very small combinations and be willing to ignore the contribution when an item is first in or second in, say.  The `minitems` parameter implements that capability, in much the same way as `maxitems` is handled (valuation functions need not worry about it; the drivers take care of it).  Items must *not* be dropped from the beginning of COAs or other ordering arrays in this case.
+
+
+## Weighted Data
+
+All functions handle respondent weights (i.e., “survey weights”).  For key driver regressions, the weights are used in building the sum of cross products matrix (see `cpBuild()`).  That function calculates an “effective sample size” based on the weights (the sum of the squares of the weights divided by the sum of the squared weights, the “Kish formula”), which is attached as an attribute to the SCP matrix and used when adjusted r-squareds are calculated (unless a parameter specifies a different value).
+
+In most other cases, the weights must be passed down to valuation functions using R’s `...` mechanism and must be handled at that level.  All valuation functions in `ShapCOA` handle weights.
+
+If desired, the `checkWeights()` function can be used to be sure supplied weights look OK (correct length, all non-negative) or to create a weight vector of constants.
+
+
+
+ 
+

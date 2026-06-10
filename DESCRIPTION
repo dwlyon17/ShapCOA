@@ -1,0 +1,32 @@
+Package: ShapCOA
+Type: Package
+Title: Shapley Values Via Component Order of Addition Designs Et Al.
+Version: 0.1.0
+Date: 2026-06-10
+Author: David W. Lyon <dlyon@aurora2000.com>
+Maintainer: David W. Lyon <dlyon@aurora2000.com>
+Description: Use Component Order of Addition (COA) experimental designs to compute highly accurate approximations i
+    of Shapley Values (SVs), even for very large number of items.
+    Compute exact SVs for smaller problems.  
+    Applicable to any underlying analysis, but highly optimized for common marketing resarch applications 
+    (key driver regressions, total unduplicated reach and frequency or 'TURF' analyses, and 'TURF on MaxDiff').
+License: GPL (>= 3)
+Encoding: UTF-8
+Imports: 
+    combinat,
+    lhs,
+    matrixStats,
+    numbers,
+    Rcpp
+LinkingTo: Rcpp, RcppArmadillo
+Roxygen: list(markdown=TRUE)
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 3.5)
+Suggests: 
+    testthat (>= 3.0.0),
+    relaimpo,
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
