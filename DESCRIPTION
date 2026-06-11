@@ -1,7 +1,7 @@
 Package: ShapCOA
 Type: Package
 Title: Shapley Values Via Component Order of Addition Designs Et Al.
-Version: 0.1.0
+Version: 0.1.0.9000
 Date: 2026-06-10
 Author: David W. Lyon <dlyon@aurora2000.com>
 Maintainer: David W. Lyon <dlyon@aurora2000.com>
