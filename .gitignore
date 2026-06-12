@@ -1,2 +1,4 @@
 inst/doc
 inst/*.docx
+.Rproj.user
+.Rhistory

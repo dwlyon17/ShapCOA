@@ -4,7 +4,7 @@ title: "Overview of Package ShapCOA"
 output: 
   rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to ShapCOA}
+  %\VignetteIndexEntry{Overview}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

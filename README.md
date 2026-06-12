@@ -6,7 +6,7 @@ This R package will compute Shapley Values (SVs) using Component Order of Additi
 
 You can install the latest version of ShapCOA from GitHub using the R function:
 ```
-remotes::install_github("DWLyon17/ShapCOA")
+remotes::install_github("DWLyon17/ShapCOA", build_vignettes=TRUE)
 ```
 This initial version is fully functional for many use cases and includes:
 * Generation of Component Order of Addition (COA) designs of an desired size,
