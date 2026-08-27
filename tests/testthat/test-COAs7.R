@@ -8,7 +8,7 @@ test_that("primeSize looks OK up to 175", {
  
 psmall <- primes[primes>10&primes<50]         # Smallish ones for faster tests
 testsize <- psmall[order(runif(length(psmall)))[1]]
-cat ( "Testing COA of size", testsize, "\n" )
+cat ( "\nTesting COA of size", testsize, "\n" )
 
 testCOA <- getCOA ( testsize )
 testOA <- getOA ( testsize )
@@ -48,7 +48,7 @@ test_that("Permuted COA still checks out", {
 })
 
 nperm <- floor ( runif(1)*5 ) + 3
-cat ( "Testing", nperm, "permutations.\n" )
+cat ( "\nTesting", nperm, "permutations.\n" )
 
 perm3 <- permuteCOA ( designCode ( testCOA ), nperm )
 test_that("permuteCOA delivers correct length", {
@@ -96,8 +96,3 @@ test_that("userCode inverts designCode for an OA", {
 test_that("designCode inverts userCode for an OA", {
   expect_equal ( testOA, designCode ( userCode ( testOA ) ) )
 })
-
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
-})
-

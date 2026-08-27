@@ -9,7 +9,7 @@ size1 <- floor ( runif(1) * 4 ) + 5         # how many variables to test on, 5-8
       # == If range 5:8 is changed, do NOT include any non-primes requiring
       #      drops of more than 1 item from COAs, else max/min won't match
 ivars <- sample ( 16, size1 )               # pick variables to test
-cat ( "Testing KDRs on variables:", ivars, "\n" )
+cat ( "\nTesting KDRs on variables:", ivars, "\n" )
 testdd <- testd[,c(ivars,17)]
 scpMatrix <- cpBuild ( testdd )
 
@@ -22,28 +22,36 @@ names(rel1) <- NULL           # Comparees don't keep names
 #     my combinations version, exact
 comb1 <- SVsByCombos ( , size1, multi=TRUE, silent=TRUE, 
                        scpMatrix=scpMatrix, depvar=ncol(scpMatrix) )
-test_that("Combos driver matches RelaImpo", {
+test_that("Combos driver w/ comb1 matches RelaImpo", {
   expect_equal ( comb1, rel1 )
 })
 
 # Next few are duplicated by dtest calls below, but these are the simplest
 #   and easiest-to-read tests
 
-ord1 <- SVsByOrders ( ordall, , scpMatrix=scpMatrix, multi=TRUE )     # general driver
+ord1 <- SVsByOrders ( ordall, , scpMatrix=scpMatrix, multi=TRUE )   
+                                                         # general driver
 test_that("Orders driver matches Combos", {
   expect_equal ( ord1, comb1 )
 })
 
-ord2 <- SVsForKDRsByOrders ( ordall, scpMatrix=scpMatrix )   # KDR-specific
+ord2 <- SVsForKDRsByOrders ( ordall, scpMatrix=scpMatrix )   
+                                                         # KDR-specific
 test_that("New KDR orders driver matches Combos", {
   expect_equal ( ord2, comb1 )
 })
 
 ord3 <- SVsByOrders1 ( ordall, KDRsolve1Combo, scpMatrix=scpMatrix,
                        depvar=nrow(scpMatrix) )  
-                                    # 1 combo at a time
+                                                         # 1 combo at a time
 test_that("Dumb orders driver matches Combos", {
   expect_equal ( ord3, comb1 )
+})
+
+ord4 <- SVsByOrders ( ordall, KDRsolveOrder1, scpMatrix=scpMatrix, multi=FALSE )     
+                                                         # one order at a time
+test_that("Orders driver on single orders matches Combos", {
+  expect_equal ( ord4, comb1 )
 })
 
 
@@ -141,7 +149,6 @@ for ( ipass in 1:2 )  {
     })
   }
 }
-
 
 
 # ==== Repeat with adjusted r-squareds

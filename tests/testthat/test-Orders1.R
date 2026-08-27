@@ -99,7 +99,3 @@ test_that("genRandOrders right size by norders", {
   expect_equal ( norders, ncol(genrand) )
 })
 ckOrders ( "genRandOrders", genrand, FALSE )
-
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
-})

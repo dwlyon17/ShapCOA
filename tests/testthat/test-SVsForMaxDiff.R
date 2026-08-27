@@ -2,14 +2,14 @@
 
 # ==== Get 0/1 TURF data to test on, select random vars to test
 data_path <- system.file ( "TURFtest.RDS", package="ShapCOA" )
-cat ( "data path is ", data_path, "\n" )
+cat ( "\ndata path is ", data_path, "\n" )
 testd <- readRDS ( data_path )
 
 size1 <- floor ( runif(1) * 5 ) + 4    # how many variables to test on, 4-8
       # == If range 5:8 is changed, do NOT include any non-primes requiring
       #      drops of more than 1 item from COAs, else max/min won't match
 ivars <- sample ( ncol(testd), size1 )            # pick variables to test
-cat ( "Testing 0/1 TURF on variables:", ivars, "\n" )
+cat ( "\nTesting 0/1 TURF on variables:", ivars, "\n" )
 testd1 <- testd[,ivars]
 
 ordall <- genAllOrders ( size1 )
@@ -47,7 +47,7 @@ equipos <- unique ( c ( pp, pp-1 ) )     # all n's w/ equipositioning
 equipos <- equipos[equipos>=10]
 size2 <- sample ( equipos, 1 )           # pick an equi-posnd size to test
 ivars <- sample ( ncol(testd), size2 )            # pick variables to test
-cat ( "Testing 0/1 TURF on variables:", ivars, "\n" )
+cat ( "\nTesting 0/1 TURF on variables:", ivars, "\n" )
 testd2 <- testd[,ivars]
 coa <- getCOA ( size2 )
 
@@ -83,7 +83,7 @@ test_that ( "High correlations between COAs", {
 data_path <- system.file ( "MDtester.RDS", package="ShapCOA" )
 testd <- readRDS ( data_path )
 
-cat ( "Testing anchored MD\n" )
+cat ( "\nTesting anchored MD\n" )
 mdasa <- list()
 for ( ipass in 1:6 )  {
   threshold <- list ( TRUE, FALSE, 0.5, 0.6, 0.0001, 0.9999 )[[ipass]]
@@ -117,7 +117,7 @@ test_that ( "Anchor threshold defaults to 0.5", {
 })
 
 # ==== Now try MNL analyses, using the anchored data (with anchor removed)
-cat ( "Testing MNL Maxdiff\n" )
+cat ( "\nTesting MNL Maxdiff\n" )
 testdd <- testd[,-ncol(testd)]     # get rid of the anchor
 mdmsa <- list()
 for ( ipass in 1:7 )  {
@@ -161,7 +161,7 @@ test_that ( "MNL threshold higher-> results lower", {
 })
 
 # Now treat it as regular non-anchored, default scoring, Maxdiff
-cat ( "Testing default MaxDiff\n" )
+cat ( "\nTesting default MaxDiff\n" )
 mddsa <- list()
 for ( ipass in 1:7 )  {
   threshold <- list ( TRUE, FALSE, 0.5, 0.9, 0.0001, 0.9999, 0.5 )[[ipass]]
