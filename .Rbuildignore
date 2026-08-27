@@ -3,3 +3,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.Rhistory
+^doc$
+^Meta$
+^work$
+^Installer.R

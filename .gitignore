@@ -1,4 +1,9 @@
 inst/doc
 inst/*.docx
+/work/
+work/
 .Rproj.user
 .Rhistory
+/doc/
+/Meta/
+Installer.R

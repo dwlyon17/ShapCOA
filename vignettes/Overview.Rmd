@@ -78,7 +78,7 @@ There are three general ways to calculate Shapley Values:
 
 **Orderings Approach.**  The SV of an item is the average increase in value when it enters a combination, averaged over all possible orders of entry of all items. The number of orderings explodes even more quickly than combinations, that number being $n!$, so averaging over all orderings is usually not feasible beyond 12 items or so.  However, this approach can also use COAs as a sample of orderings, typically involving about $n(n-1)$ orderings and achieving highly accurate approximations. That is the central contribution of this package.
 
-**Hypergeometric Approach.**  For standard TURF analyses (meaning item data at the respondent level is either 0 or 1, and the value of a combination is something simple like the percentage of respondents for whom a combination includes at least one item with a value of 1), and a number of variants also based on 0/1 data, SVs collapse to extremely simple respondent-level calculations and means over respondents. This package will include (but does not yet) functions to implement those calculations.
+**Hypergeometric Approach.**  For standard TURF analyses (meaning item data at the respondent level is either 0 or 1, and the value of a combination is something simple like the percentage of respondents for whom a combination includes at least one item with a value of 1), and a number of variants also based on 0/1 data, SVs collapse to extremely simple respondent-level calculations and means over respondents. This package will (but does not yet) include functions to implement those calculations.
 </div>
 
 ---
@@ -143,7 +143,7 @@ The following chart summarizes the functions that implement various applications
 | Numbers of items that can be handled | Up to 800 or more before memory constraints. Up to 200 or so in many cases before time constraints | Usually up to at most 30 before both memory and time constraints | Practically unlimited |
 | Accuracy of Results | Excellent with COAs. Exact if all possible orderings are used (not feasible with more than about 12 items.) | Exact | Exact |
 | **Application Type:** | | | |
-| **Linear key drivers** (see note below) | `SVsForKDRsbyOrders()` and `cpBuild()` | `SVsByCombos()` with `KDRsolveCombos()` and `cpBuild()` | Not possible |
+| **Linear key drivers** (see note below) | `SVsForKDRsByOrders()` and `cpBuild()` | `SVsByCombos()` with `KDRsolveCombos()` and `cpBuild()` | Not possible |
 | **Log-linear key drivers** | Forthcoming; not yet available. Will be via `SVsByOrders()` with a new valuation function | Not included; not planned | Not possible |
 | **“Standard” TURF** | `SVsForMaxDiff()` <br> Use `xform=NULL` | `SVsByCombos()` with `turf1()` (but exceptionally inefficient). Better valuation functions forthcoming. | Forthcoming; not yet available |
 | **Variants of TURF** | Forthcoming; not yet available. Will be via `SVsByOrders()` with a new valuation function | Forthcoming; not yet available. Will be via `SVsByCombos()` with a new valuation function | Forthcoming; not yet available |
@@ -154,6 +154,8 @@ The following chart summarizes the functions that implement various applications
 **Key Driver Regressions**
 
 For linear key drivers regressions, the package functions expect to receive a sum-of-cross-products (SCP) matrix as a parameter.  These SCP matrices must **not** include a row/column for the constant in the regression.  See `cpBuild()` and (of less use/interest) `cpConstantOut()` and `swp()`.
+
+In version 0.2.0, missing data in KDRs is handled by the updated `cpBuild()` function.  It can be treated on either a listwise or pairwise basis, depending on its new `missing` parameter.
 
 Note that the `calc.relimp()` function in package `'relaimpo'` will also calculate exact SVs for linear regressions, using its `type=lmg` parameter.  It is less efficient than using `SVsByCombos()` with value function `KDRsolveCombos` (by around 12X) but `'relaimpo'` includes a number of additional capabilities `ShapCOA` does not (including grouped variables, always-in variables, bootstrapping functions, interaction term and average regression coefficients).
 
