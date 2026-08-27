@@ -16,8 +16,8 @@ Imports:
     combinat,
     lhs,
     matrixStats,
-    numbers,
     configural,
+    numbers,
     Rcpp
 LinkingTo: Rcpp, RcppArmadillo
 Roxygen: list(markdown=TRUE)
