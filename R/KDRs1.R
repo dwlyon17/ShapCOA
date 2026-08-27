@@ -1,32 +1,6 @@
 # KDR solvers and general-purpose drivers for combination-approach Shapley
 # Values, plus utilities to build CP matrices
 
-# Weight checking is also used elsewhere 
-#' Check whether respondent weights are OK
-#' 
-#' This function prints a complaint message if weights are not of right
-#'   length or any are negative.
-#'   
-#' @param weights The weights vector to be checked.
-#' @param nresp Number of respondents and expected number of weights.
-#' @param caller Character name of calling routine for use in any message 
-#'   to console.
-#' @returns `TRUE` if weights look OK, `FALSE` if any problem found.
-#' @keywords internal
-checkWeights <- function ( weights, nresp, caller )  {
-  if ( length(weights) != nresp )  {     # wrong length?
-    cat ( paste0 ( caller, ": Data has ", nresp, " rows but only ", 
-                   length(weights), " weights were given.\n" ) )
-    return (FALSE)
-  }
-  if ( any(weights<0) )  {
-    cat ( paste0 ( caller, ": Negative weights are not allowed.  See position ", 
-          which(weights<0)[1], " in weights, for example.\n" ) )
-    return (FALSE)
-  }
-  TRUE
-}
-
 #' Reconcile KDR adjusted and both flags, set totdf
 #'
 #' Internal function for setting up the KDR adjusted and both flags, and
@@ -43,18 +17,18 @@ checkWeights <- function ( weights, nresp, caller )  {
 #'   effective sample size used to create it.
 #' @param maxvars Total number of independent variables/items 
 #'   (which the total d.f. must exceed).
+#' @param caller Name of function calling us, for use in messages/errors.
 #' @returns A list with three elements: doadj (logical, whether to compute
 #'   adjusted r-squared), doraw (logical, whether to do straight r-squared),
 #'   and totdf (total d.f. to use for adjusted r-squared, with 1 already
 #'   subtracted for the constant term).
 #' @keywords internal
 adjustOrNot <- function ( adjusted=FALSE, both=FALSE, 
-                          scpMatrix=NULL, maxvars=0 )  {
+                          scpMatrix=NULL, maxvars=0, caller="??" )  {
   # Rigamarole for adjusted or not, and different ways of conveying
   #   the total degrees of freedom to use for adjusting.  
   if ( is.null(adjusted) )  adjusted <- both            # both=>adjusted
   if ( !adjusted && both )  {
-    caller <- as.character ( sys.call(-2) [[1]] )
     stop ( caller, "adjusted FALSE, both TRUE, will not cut it!" )
   }
   # adjusted now logical or numeric (not NULL)
@@ -68,7 +42,6 @@ adjustOrNot <- function ( adjusted=FALSE, both=FALSE,
   if ( adjusted )  {              # check for reasonable total d.f.
     totdf <- totdf - 1            # for convenience to callers
     if ( maxvars > 0 && totdf <= maxvars ) {    # This is just wrong!!
-      for ( j in 1:2 )  cat ( j, as.character ( sys.call(1) [1] ), "\n" )
       stop ( caller, "adjusted must be > number of Xs",
              "(residual df for adjustment)" )
     }
@@ -104,14 +77,26 @@ adjustOrNot <- function ( adjusted=FALSE, both=FALSE,
 #'   or character name of the weights column in `df`.  
 #'   Unweighted data if `NULL`.  
 #'   Weights may be zero to subset data but may never be negative.
+#' @param missing If "none", any missing data in `df` is an error.
+#'   If "listwise", any row/observation/respondent with any missing data
+#'     is dropped from the CP matrix.
+#'   If "pairwise", missing data is excluded only from the specific pairs
+#'     of variables that include missings.  This can sometimes result in a
+#'     cross-products or covariance matrix that is not positive definite
+#'     and is thus not valid for regression, 
+#'     as diagnosable by a negative eigenvalue for the SCP matrix,
+#'     in which case an error is thrown.
 #' @returns A square, symmetric cross-products matrix.  If `precenter` is 
 #'   `FALSE`, the first row/column is for a constant variable, whether or not 
 #'   one was found in `df`.  The dependent variables are always the last 
 #'   row/columns.  Returns `NULL` if `weights` or `depvar` are invalid.
+#' @importFrom stats complete.cases
 #' @importFrom matrixStats colVars
+#' @importFrom configural wt_cov
 #' @export
 cpBuild <- function ( df, depvar=NULL, precenter=TRUE, 
-                      weights=NULL, silent=FALSE )  {
+                      weights=NULL, silent=FALSE, 
+                      missing=c("none","listwise","pairwise") )  {
   # Much inefficiency here, converting matrix to data.frame and back, but
   #   we are usually just called once and this allows flexibility in how
   #   dependents and weights are specified, and in which way df is structured
@@ -149,10 +134,11 @@ cpBuild <- function ( df, depvar=NULL, precenter=TRUE,
       return (NULL)
     }
     weights <- dfm[,wtpos]                  # extract weights
-    dfm <- dfm[,-wtpos]                      # remove from df
+    dfm <- dfm[,-wtpos]                     # remove from df
   }                              # not single, not character, must be vector
   
   if ( !checkWeights ( weights, nrow(dfm), "cpBuild" ) )  return (NULL)
+                                            # ckWts will actually stop if bad
   effsize <- sum(weights)^2 / sum(weights^2)   # Kish's effective sample size
                 # will be attached to result for use in adjusting r-squareds
   
@@ -212,15 +198,78 @@ cpBuild <- function ( df, depvar=NULL, precenter=TRUE,
   }
   
   # Now we have dfm in the column order:  1 (maybe), Xs, Ys.
-  # Pre-center if desired
-  colmeans <- colSums(dfm*weights) / sum(weights)
-  if ( precenter )  dfm <- t ( t(dfm) - colmeans )
   
-  # Finally ready for the easy part:  Just take the built-in crossproduct
-  dfm <- dfm * sqrt(weights)          # Cross-products will re-square the root!
-  cp <- crossprod ( dfm )
-  attr(cp,"ESS") <- effsize 
-  cp
+  # Finally ready for the easy part, except for missingness:  
+  missing <- match.arg ( missing )        # clean up the parameter
+  nonmiss <- complete.cases ( dfm )       # how many complete cases
+  if ( any(!nonmiss) )  {                 # any missing data?
+    if ( missing == "listwise" )  {
+      message ( "cpBuild: Of ", nrow(dfm), " cases, ", sum(!nonmiss),
+                " have missing data and are being dropped." )
+      if ( sum(nonmiss) < ncol(df)+2 )  {
+        stop ( "cpBuild: Too many cases dropped for this many variables." )
+      }
+      dfm <- dfm[nonmiss,]                # drop cases with missings
+      weights <- weights[nonmiss]
+      missing <- "none"                   # with cases dropped, just normal
+    } else if ( missing == "none" )  {
+      stop ( "cpBuild: missing='none' but there are ", 
+             nrow(dfm)-sum(nonmiss), " cases with missing data." )
+    }
+  } else missing <- "none"                # if none missing, none is OK!
+  
+  switch ( missing, 
+           none = {                       # none or fixed-up listwise
+             if ( precenter )  {          # Pre-center if desired
+               colmeans <- colSums(dfm*weights) / sum(weights)
+               dfm <- t ( t(dfm) - colmeans )
+             }
+             dfm <- dfm * sqrt(weights)   # CPs will re-square the root!
+             cp <- crossprod ( dfm )      # Just take the built-in crossproduct
+             effsize <- sum(weights)^2 / sum(weights^2)   
+                                          # Kish's effective sample size
+             attr(cp,"ESS") <- effsize    # for us in adjusting r-squareds
+           },
+           
+           pairwise={
+             wtpres <- matrix ( weights, length(weights), ncol(dfm) )
+                                          # weights per column/variable
+             wtpres[is.na(dfm)] <- NA     # missing data -> missing weight
+             effsize <- colSums ( wtpres, na.rm=TRUE ) ^ 2 /
+               colSums ( wtpres^2, na.rm=TRUE )     # Kish's ESS per column
+             if ( any(effsize<=0) || any(is.na(effsize) ) )  {
+               stop ( "cpBuild: one variable is entirely missing!" )
+             }
+             effsizef <- exp ( mean ( log ( effsize ) ) )  # geo mean of values
+             Ngood <- outer ( 1:ncol(dfm), 1:ncol(dfm), 
+                              Vectorize ( function(i,j)
+                                        sum(complete.cases(dfm[, c(i, j)])) ) )
+             message ( "cpBuild: Using missing=pairwise, pairs have a maximum",
+                       " of ", nrow(dfm)-min(Ngood), " missing cases\n",
+                       "         ESS ranges from ", round(min(effsize),1), 
+                       " to ", round(max(effsize),1), ", using ",
+                       round(effsizef,1), " for any r-sq adjustment." )
+             if ( precenter )  {
+               colmeans <- colSums ( dfm*wtpres, na.rm=TRUE ) / 
+                 colSums ( wtpres, na.rm=TRUE )  # wtd means for non-miss data
+               dfm <- t ( t(dfm) - colmeans )     # NAs stay NA
+             }
+             cp <- wt_cov ( dfm, , weights, use="pairwise", unbiased=FALSE )
+             eigvals <- eigen ( cp, symmetric=TRUE, only.values=TRUE )$values
+             print ( min(eigvals) )
+             if ( any(eigvals <= 0 ) )  {
+               stop ( "cpBuild: missing=pairwise produced a covariance ",
+                      "matrix with a negative eigenvalue(s),\n",
+                      "         indicating incompatibility among ",
+                      "pairwise estimates." ) 
+             }
+             attr(cp,"ESS") <- effsizef    # for us in adjusting r-squareds
+           },
+           
+           { stop ( "cpBuild: invalid 'missing' parameter: ", missing ) 
+           }
+         )
+  cp  
 }
 
 #' "Sweep out" and drop the constant row/column of a cross-products matrix
