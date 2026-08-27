@@ -30,7 +30,9 @@ effective sample size used to create it.}
 
 \item{ndep}{Integer number of dependent variables.  If zero, it is
 calculated as the number of columns in \code{scpMatrix} minus the
-number of rows in \code{orders} (i.e., assuming all items in all orders).}
+number of rows in \code{orders} (i.e., assuming all items in all orders).
+This won't work when \code{maxitems} is less than the number of rows
+in \code{orders}.}
 
 \item{adjusted}{If numeric and not zero, requests the adjusted r-squared
 and gives the total d.f. to use for it.

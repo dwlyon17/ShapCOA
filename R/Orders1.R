@@ -10,7 +10,7 @@
 #' issue only for large numbers of orders on few variables.  It is intended
 #' for use in researching COA performance vs. random, not recommended for
 #' "live" data use.
-
+#' 
 #' @param nvars Number of variables for which to generate orderings, which will 
 #'   be the length of each ordering.
 #' @param norders Number of orderings to generate.

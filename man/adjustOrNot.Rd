@@ -4,7 +4,13 @@
 \alias{adjustOrNot}
 \title{Reconcile KDR adjusted and both flags, set totdf}
 \usage{
-adjustOrNot(adjusted = FALSE, both = FALSE, scpMatrix = NULL, maxvars = 0)
+adjustOrNot(
+  adjusted = FALSE,
+  both = FALSE,
+  scpMatrix = NULL,
+  maxvars = 0,
+  caller = "??"
+)
 }
 \arguments{
 \item{adjusted}{If numeric and not zero, requests the adjusted r-squared
@@ -21,6 +27,8 @@ effective sample size used to create it.}
 
 \item{maxvars}{Total number of independent variables/items
 (which the total d.f. must exceed).}
+
+\item{caller}{Name of function calling us, for use in messages/errors.}
 }
 \value{
 A list with three elements: doadj (logical, whether to compute

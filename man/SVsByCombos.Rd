@@ -7,8 +7,8 @@
 SVsByCombos(
   vfunc = KDRsolveCombos,
   nitems,
-  maxitems = nitems,
   minitems = 0,
+  maxitems = nitems,
   multi = TRUE,
   nonull = TRUE,
   silent = FALSE,
@@ -20,15 +20,15 @@ SVsByCombos(
 
 \item{nitems}{The number of items or variables in the problem.}
 
-\item{maxitems}{The maximum combination size to consider, defaulting to
-all items.  If this is 5, for example, value increments from size 4
-to 5 are included, but from size 5 to 6 are not.
-If 0 or \code{NULL}, the value of \code{nitems} is used.}
-
 \item{minitems}{The minimum combination size to consider, defaulting to
 zero.  If this is 2, for example, value increments from combinations of
 size 2 to 3 are included in the calculation, but increments from size 0
 to 1 and size 1 to 2 are not.}
+
+\item{maxitems}{The maximum combination size to consider, defaulting to
+all items.  If this is 5, for example, value increments from size 4
+to 5 are included, but from size 5 to 6 are not.
+If 0 or \code{NULL}, the value of \code{nitems} is used.}
 
 \item{multi}{Whether \code{vfunc} can be called with a matrix of many combinations
 of a given size, or if \code{FALSE}, must be called for each combination

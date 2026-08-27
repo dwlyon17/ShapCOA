@@ -4,7 +4,14 @@
 \alias{cpBuild}
 \title{Construct a cross-product matrix for use in various key driver routines}
 \usage{
-cpBuild(df, depvar = NULL, precenter = TRUE, weights = NULL, silent = FALSE)
+cpBuild(
+  df,
+  depvar = NULL,
+  precenter = TRUE,
+  weights = NULL,
+  silent = FALSE,
+  missing = c("none", "listwise", "pairwise")
+)
 }
 \arguments{
 \item{df}{A matrix or data frame of the X's and Y's for the result matrix.}
@@ -23,6 +30,16 @@ Weights may be zero to subset data but may never be negative.}
 
 \item{silent}{Logical, whether to avoid sending commentary to console as
 the CP matrix is constructed.}
+
+\item{missing}{If "none", any missing data in \code{df} is an error.
+If "listwise", any row/observation/respondent with any missing data
+is dropped from the CP matrix.
+If "pairwise", missing data is excluded only from the specific pairs
+of variables that include missings.  This can sometimes result in a
+cross-products or covariance matrix that is not positive definite
+and is thus not valid for regression,
+as diagnosable by a negative eigenvalue for the SCP matrix,
+in which case an error is thrown.}
 }
 \value{
 A square, symmetric cross-products matrix.  If \code{precenter} is
