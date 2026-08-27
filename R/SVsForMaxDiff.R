@@ -181,33 +181,20 @@ SVsForMaxDiff <- function ( orders=NULL, utilities, xform=NULL,
   # ==== Generate the COA needed, or check any orderings caller gave us.
   #      Apply the maximum items, if it matters.
   nitems <- ncol(utilities)         # # items (less any original anchor)
-  if ( is.null(maxitems) )  maxitems <- 0
-  if ( maxitems == 0 )  maxitems <- nitems
+  ckitems <- ckMinMax ( minitems, maxitems, , nitems, "SVsForMaxDiff" )
+  minitems <- ckitems[1]; maxitems <- ckitems[2]
   if ( is.null(orders) )  {
     orders <- getCOA ( nitems, ncoas, ... )  
-                                        # Get (possibly stacked) COA we need
-  } else {                              # If actually given orderings, not usual
-    if ( nitems < nrow(orders) )  {     # Nonsense!
-      stop ( "SVsForMaxDiff: Orderings given are longer than ",
-             "number of columns of utilities" )
-    }                                   # implied maxitems
-    if ( nitems != nrow(orders) )  {    # sizes don't match
-      if ( nrow(orders) != maxitems )  {
-        stop ( "SVsForMaxDiff: Length of each ordering is neither ",
-               "number of items nor maxitems." )
-      } else {                          # legit implied maxitems
-        cat ( "SVsForMaxDiff: Orderings are not full for all variables.",
-              " Size-limited SVs will be done.\n" )
-        maxitems <- nrow(orders)
-      }
-    }
-  } 
-  if ( maxitems != nitems )  orders <- orders[1:maxitems,,drop=FALSE]
+  }                                     # Get (possibly stacked) COA we need
+  if ( maxitems < NROW(orders) )  orders <- orders[1:maxitems,,drop=FALSE]
+                                        # Trim full orders if not using all
   
   # ==== Manage the weights
   if ( is.null(weights) )   weights <- rep(1,nrow(utilities)) 
-  if ( !checkWeights ( weights, nrow(utilities), 
-                       "SVsOnMaxDiff" ) )  return (NULL)
+  if ( !checkWeights ( weights, nrow(utilities), "SVsForMaxDiff" ) )  {
+    return ( NULL )  
+  }
+                                            # ckWts will actually stop if bad
   
   # ==== Default the post-threshold
   if ( is.null(threshold) )  threshold <- TRUE    # default if omitted
@@ -234,7 +221,7 @@ SVsForMaxDiff <- function ( orders=NULL, utilities, xform=NULL,
   if ( minitems > 0 )  {                   # drop items below the minimum
     drops <- - (1:minitems)
     values <- values[drops,,drop=FALSE]   
-    orders <- orders[drops,,drop=FALSE]    # in case min=max, don't lose a dim
+    orders <- orders[drops,,drop=FALSE]    # in case min==max, don't lose a dim
   }
   
   # Add up totals, get means for results.  

@@ -76,7 +76,7 @@
 #' @importFrom utils combn
 #' @export
 SVsByCombos <- function ( vfunc=KDRsolveCombos, nitems, 
-                          maxitems=nitems, minitems=0, 
+                          minitems=0, maxitems=nitems, 
                           multi=TRUE, nonull=TRUE, silent=FALSE, ... )  {
   # Timing tests show no significant speed loss from adding max, min, nonull
   #   and multi features to this.
@@ -84,12 +84,8 @@ SVsByCombos <- function ( vfunc=KDRsolveCombos, nitems,
   #   from trying to do all at once.  
   # Basic approach borrowed from relaimpo, but more memory-efficient.
   
-  if ( is.null(maxitems) || maxitems == 0 )  maxitems <- nitems
-  if ( maxitems > nitems || minitems >= maxitems )  {
-    cat ( "SVsByCombos: For", nitems, "items, maximum of", maxitems,
-          "and minimum of", minitems, "are invalid.\n" )
-    return ( NULL ) 
-  }
+  ckitems <- ckMinMax ( minitems, maxitems, , nitems, "SVsByCombos" )
+  minitems <- ckitems[1]; maxitems <- ckitems[2]
   
   # Deduce number of scores returned from vfunc (typically meaning number 
   #   of different dependent variables, but could be alternate scores 
@@ -154,14 +150,15 @@ SVsByCombos <- function ( vfunc=KDRsolveCombos, nitems,
 increments <- function ( result )  {
   if ( NROW(result) == 1 )  return ( result )
   switch ( length(dim(result)), 
-         rbind ( result[1], diff(result) ),                  # vector
-         rbind ( result[1,], diff(result) ),                 # matrix
-         { for ( i in 1:dim(result)[3] )  {                  # 3-D
-            result[,,i] <- rbind ( result[1,,i], 
-                                   diff(result[,,i]) )
-           }
-           result 
-         } )
+             rbind ( result[1], diff(result) ),                  # vector
+             rbind ( result[1,], diff(result) ),                 # matrix
+             { for ( i in 1:dim(result)[3] )  {                  # 3-D
+                result[,,i] <- rbind ( result[1,,i], 
+                                       diff(result[,,i]) )
+               }
+               result 
+             }
+         )
 }
 
 #' Total SV item contributions by variable, undoing the ordering they were in
@@ -186,6 +183,26 @@ totalup <- function ( pieces, orders )  {
     totals[orders[,i],] <- totals[orders[,i],] + pieces[,i,]
   }
   totals
+}
+
+#' Single-order KDR solution, for testing purposes only!
+#'
+#' This function gets a set of KDR solutions for a single-ordering only,
+#'   by invoking the usual multi-ordering routine with a one-column matrix
+#'   of orderings.  
+#'   
+#' It is used only to test the single-ordering capability of `SVsbyOrders()`
+#    when called with `multi=FALSE`.  It has no value for production.
+#' 
+#' @param order A vector of item orders, that must include all items 
+#'   (i.e., it cannot be a size-limited ordering).
+#' @returns A 3-D array of KDR values, dimensioned (nitems,1,nres) 
+#'   where nres is the number of results (e.g., raw and adjusted r-squareds)
+#'   specified by the ... parameters to `KDRsolveOrders_cpp()`.
+#' @keywords internal
+KDRsolveOrder1 <- function ( order, ... )  {
+  dim(order) <- c(length(order),1)          # make the vector an array
+  KDRsolveOrders_cpp ( order, ... )         # off to the usual routine
 }
 
 #' Approximate orderings-based Shapley Values on an arbitrary valuation 
@@ -250,21 +267,11 @@ totalup <- function ( pieces, orders )  {
 SVsByOrders <- function ( orders, vfunc=KDRsolveOrders_cpp, silent=FALSE, 
                           minitems=0, maxitems=0, multi=FALSE, ... )  {
   # ==== Defaults and checking ...
-  maxlen <- nrow(orders)      # length of each ordering
-  nitems <- max(orders)       # number of items
-  if ( is.null(maxitems) )  maxitems <- 0
-  if ( maxitems == 0 )  maxitems <- nitems
-  if ( maxitems > 0 )  {             # Cut down if not already done
-    if ( maxitems != maxlen )  {     # Not already cut down
-      if ( maxlen != nitems )   {    # Not full either?
-        stop ( "SVsByOrders: Length of each ordering is neither ",
-               "number of variables nor maxitems." )
-      } else {
-        orders <- orders[1:maxitems,,drop=FALSE]   # cut it down from full
-        maxlen <- nrow(orders)
-      }
-    }
-  }
+  nitems <- max(orders)           # highest item # seen is the number we do
+  ckitems <- ckMinMax ( minitems, maxitems, orders, , "SVsByOrders" )
+  minitems <- ckitems[1]; maxitems <- ckitems[2]
+  if ( maxitems < NROW(orders) )  orders <- orders[1:maxitems,,drop=FALSE]   
+                                  # cut orders down if not using all 
 
   # ==== Deduce number of distinct scores returned from func (typically
   #      meaning number of different dependent variables, but could be alternate
@@ -272,7 +279,7 @@ SVsByOrders <- function ( orders, vfunc=KDRsolveOrders_cpp, silent=FALSE,
   # Call with one ordering and see what happens.
   if ( multi )  {
     test1 <- vfunc ( orders[,1,drop=FALSE], ... )
-    nres <- NCOL(test1)               # # of distinct results
+    nres <- NCOL(test1)               # # of distinct desults
     if ( length(dim(test1)) == 3 )  { nres <- dim(test1)[3]
     } else nres <- 1
     nvres <- dim(test1)[1]            # # results per ordering per measure
@@ -290,7 +297,7 @@ SVsByOrders <- function ( orders, vfunc=KDRsolveOrders_cpp, silent=FALSE,
 
   # ==== Now the basic work of the value function.
   if ( !multi )  {              
-    contribs <- array ( NA, c( ncol(orders), nitems, nres ) )
+    contribs <- array ( NA, c( nitems, ncol(orders), nres ) )
                                 # create array to fill in
     for ( i in 1:ncol(orders) )  contribs[,i,] <- vfunc ( orders[,i], ... )
                                 # step through all orders
@@ -369,9 +376,9 @@ SVsByOrders1 <- function ( orders, vfunc, minitems=0, silent=FALSE, ... )  {
   
   nitems <- max(orders)      # max instead of nrow handles size-limited SVs
   maxlen <- nrow(orders)     # length of each ordering
-  if ( nitems != maxlen && !silent )  {
-    cat ( "SVsByOrders1: doing size-limited Shapley Values.\n" )
-  }
+  ckitems <- ckMinMax ( minitems, maxitems=0, orders, , "SVsByOrders1" )
+  minitems <- ckitems[1]; maxitems <- ckitems[2]
+  
   contribs <- matrix ( NA, nitems, ncol(orders) )
   
   for ( i in 1:ncol(orders) )  {   # step through all orders
@@ -424,6 +431,8 @@ SVsByOrders1 <- function ( orders, vfunc, minitems=0, silent=FALSE, ... )  {
 #' @param ndep Integer number of dependent variables.  If zero, it is 
 #'   calculated as the number of columns in `scpMatrix` minus the 
 #'   number of rows in `orders` (i.e., assuming all items in all orders).
+#'     This won't work when `maxitems` is less than the number of rows 
+#'       in `orders`.
 # Next is to inherit adjusted and both
 #' @inheritParams adjustOrNot   
 # Next is to inherit orders, minitems and maxitems
@@ -439,22 +448,13 @@ SVsByOrders1 <- function ( orders, vfunc, minitems=0, silent=FALSE, ... )  {
 SVsForKDRsByOrders <- function ( orders, scpMatrix, ndep=0, adjusted=NULL, 
                                  both=FALSE, minitems=0, maxitems=0 )  {
   # Set defaults and figure out what we are doing
-  if ( is.null(maxitems) )  maxitems <- 0
-  p <- nrow(scpMatrix)        # total number of variables, including dependents
-  maxlen <- nrow(orders)      # length of each ordering
-  nitems <- max(orders)       # number of items
-  if ( ndep == 0 )  ndep <- p - maxlen    # deduce # of dependents
-  if ( maxitems > 0 )  {
-    if ( maxitems != maxlen )  {     # Not already cut down
-      if ( maxlen != nitems )   {    # Not full either?
-        stop ( "SVsForKDRsByOrders: Length of each ordering is neither ",
-               "number of variables nor maxitems." )
-      } else {
-        orders <- orders[1:maxitems,,drop=FALSE]   # cut it down from full
-        maxlen <- nrow(orders)
-      }
-    }
-  }
+  ckitems <- ckMinMax ( minitems, maxitems, orders, , "SVsForKDRsByOrders" )
+  minitems <- ckitems[1]; maxitems <- ckitems[2]
+  
+  if ( ndep == 0 )  ndep <- nrow(scpMatrix) - nrow(orders)
+                                    # ndep==0 -> assume full orderings default
+  if ( maxitems < NROW(orders) )  orders <- orders[1:maxitems,,drop=FALSE]   
+                                    # cut it down if not using full orderings
   
   maxvars <- nrow(scpMatrix) - ndep
   tt <- adjustOrNot ( adjusted, both, scpMatrix, maxvars )
