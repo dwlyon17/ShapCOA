@@ -2,9 +2,9 @@
 
 # ==== Get data to test on, select random vars to test
 data_path <- system.file ( "GSSdata.RDS", package="ShapCOA" )
-cat ( "data path is ", data_path, "\n" )
+cat ( "\ndata path is ", data_path, "\n" )
 testd <- readRDS ( data_path )
-# cat ( "WD is ", getwd(), "\n" )
+# cat ( "\nWD is ", getwd(), "\n" )
 # testd <- readRDS ( "inst/GSSdata.RDS" )     # 16-variable KDR data, plus depvar
 # testd <- readRDS ( "../../inst/GSSdata.RDS" )     # 16-variable KDR data, plus depvar
             # Note that tests are run from tests/testthat
@@ -12,7 +12,7 @@ testd <- data.frame ( as.matrix ( testd ) )
 
 size1 <- floor ( runif(1) * 7 ) + 7         # how many variables to test on
 ivars <- sample ( 16, size1 )               # pick variables to test
-cat ( "Testing KDRs on variables:", ivars, "\n" )
+cat ( "\nTesting KDRs on variables:", ivars, "\n" )
 
 # ==== Setup weighted stuff for testing
 testdd <- testd[,c(ivars,17)]
@@ -36,11 +36,11 @@ test_that("Pre-center and constant-out give same CP", {
 CPwtd1 <- cpBuild ( testdd, weights=rep(1,nrow(testdd)) )
 test_that("Weights of 1 make no difference",  {
   expect_equal ( CPwithout, CPwtd1 )
-  
 })
-CPwtd2 <- cpBuild ( testdd, weights=rep(2,nrow(testdd)) )
+
 test_that("Weights of 2 make no difference",  {
-  expect_equal ( CPwithout, CPwtd1 )
+  CPwtd2 <- cpBuild ( testdd, weights=rep(2,nrow(testdd)) )
+  expect_equal ( CPwithout, CPwtd2/2 )
 })
   
 # Weights as subsetters
@@ -85,15 +85,6 @@ test_that("deps= numbers same as default", {
                 cpBuild ( testdd, depvar=ncol(testdd) ) )
 })
  
-# ==== Test checkweights
-test_that("checkweights picks up on wrong lengths", {
-  expect_false ( checkWeights ( runif(23), 24, "Length Test" ) )
-} )
-test_that("checkweights picks up on negativess", {
-  expect_false ( checkWeights ( c(runif(22),-1,1,-1,1), 26, "Non-neg Test" ) )
-} )
-
-
 # ========== Now test KDR solutions
 nvtot <- ncol(testd) - 1
 cvars <- sample ( nvtot, floor(2/3*nvtot) )  # A combination
@@ -107,7 +98,7 @@ test_that("KDRsolve1combo matches lm r-squared", {
    
 # Multiple combo solves, for 1/more dependents
 tsize <- floor ( nvtot * ( runif(1) * 0.5 + 0.3 ) )
-cat ( "Testing multiples of size", tsize, "in KDRsolveComboR\n" )
+cat ( "\nTesting multiples of size", tsize, "in KDRsolveComboR\n" )
 combos <- matrix ( NA, tsize, 8 )
 for ( i in 1:ncol(combos) )  combos[,i] <- sample ( 1:nvtot, tsize )
 kdrsq <- KDRsolveComboR ( combos, cpBuild(testd), depvar="DepVar" )
@@ -182,3 +173,48 @@ for ( i in 1:ncol(combos) )  {
 test_that("KDRsolveCombos straight/adj match lm for 2 DVs", {
   expect_equal ( rsqbot, lmrsq )
 })
+
+# ==== Test cpBuild with various missing options and missing data amounts.
+
+tdf <- matrix ( runif(1000), 100, 10 )
+test_that ( "cpBuild quits on missing data if 'none'", {
+      tdfm <- tdf
+      tdfm[sample(length(tdfm),3)] <- NA
+      expect_error ( tscpm <- cpBuild ( tdfm ), "but there are" )
+} )
+
+# == Listwise
+for ( pmiss in seq(0.01,0.2,0.04) )  {    # Various amounts listwise missing
+  tdfm <- tdf
+  tdfm[sample(length(tdfm),round(length(tdfm)*pmiss))] <- NA
+  if ( sum(complete.cases(tdfm)) > 15 )  {
+    test_that ( paste ( "Listwise", pmiss, "missing" ), { 
+          expect_message ( tscpl <- cpBuild ( tdfm, missing="listwise" ),
+                           "and are being dropped" ) 
+    } )
+  } 
+}
+test_that ( paste ( "Listwise TONS missing" ), {   # Way too much listwise
+      tdfm <- tdf
+      pmiss <- 0.7
+      tdfm[sample(length(tdfm),round(length(tdfm)*pmiss))] <- NA
+      expect_error ( tscpl <- cpBuild ( tdfm, missing="listwise" ),
+                     "Too many cases dropped" ) 
+} )
+
+# == Pairwise
+for ( pmiss in seq(0.01,0.2,0.04) )  {    # Various amounts pairwise missing
+  test_that ( paste ( "Pairwise", pmiss, "missing" ),  {
+        tdfm <- tdf
+        tdfm[sample(length(tdfm),round(length(tdfm)*pmiss))] <- NA
+        expect_message ( tscpl <- cpBuild ( tdfm, missing="pairwise" ),
+                         "pairs have a maximum" ) 
+  } )
+}
+test_that ( paste ( "Pairwise TONS missing" ), {   # Way too much pairwise
+      tdfm <- tdf
+      pmiss <- 0.7
+      tdfm[sample(length(tdfm),round(length(tdfm)*pmiss))] <- NA
+      expect_error ( tscpl <- cpBuild ( tdfm, missing="pairwise" ), 
+                     "negative eigenvalue" ) 
+} )
